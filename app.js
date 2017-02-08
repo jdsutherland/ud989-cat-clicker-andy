@@ -53,7 +53,6 @@ const detailView = {
     this.render();
   },
 
-
   render() {
     const cat = controller.getCurrentCat();
     this.$catName.text(cat.name);
@@ -76,15 +75,15 @@ const listView = {
   },
 
   appendListElements(cats) {
-    this.$catList.append($.map(cats, function(cat, i) {
+    this.$catList.append($.map(cats, function (cat, i) {
       return $('<li>', { text: cat.name, data: { index: i } })[0];
     }));
   },
 
   addListClickListeners(cats) {
-    this.$catList.on('click', 'li', function() {
+    this.$catList.on('click', 'li', function () {
       controller.setCurrentCat(cats[$(this).data('index')]);
-      detailView.render()
+      detailView.render();
     });
   },
 };
