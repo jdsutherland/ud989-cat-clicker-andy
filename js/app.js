@@ -71,22 +71,22 @@ const listView = {
   render() {
     const cats = controller.getCats();
 
-    this.appendListElements(cats);
-    this.addListClickListeners(cats);
+		this.appendListElements(cats);
+		this.addListClickListeners(cats);
   },
 
-  appendListElements(cats) {
-    this.$catList.append($.map(cats, function(cat, i) {
-      return $('<li>', { text: cat.name, data: { index: i } })[0];
-    }));
-  },
+	appendListElements(cats) {
+		this.$catList.append($.map(cats, function(cat, i) {
+			return $('<li>', { text: cat.name, data: { index: i } })[0];
+		}));
+	},
 
-  addListClickListeners(cats) {
-    this.$catList.on('click', 'li', function() {
-      controller.setCurrentCat(cats[$(this).data('index')]);
-      detailView.render()
-    });
-  },
+	addListClickListeners(cats) {
+		this.$catList.on('click', 'li', function() {
+			controller.setCurrentCat(cats[$(this).data('index')]);
+			detailView.render()
+		});
+	},
 };
 
 controller.init();
