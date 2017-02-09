@@ -2,6 +2,7 @@ class Cat {
   constructor(name) {
     this.name = name;
     this.imageSrc = `img/${this.name.toLowerCase()}.jpg`;
+    this.url = 'http://example.com';
     this.clickCount = 0;
   }
 }
@@ -22,6 +23,7 @@ const controller = {
     model.currentCat = model.cats[0];
     detailView.init();
     listView.init();
+    adminView.init();
   },
 
   getCurrentCat() {
@@ -40,6 +42,13 @@ const controller = {
     model.currentCat.clickCount++;
     detailView.render();
   },
+
+  save(params) {
+    let currentCat = this.getCurrentCat();
+    currentCat.name = params['name'];
+    currentCat.url = params['url'];
+    currentCat.clickCount = parseInt(params['clicks']);
+  }
 };
 
 const detailView = {
@@ -77,14 +86,66 @@ const listView = {
 
   appendListElements(cats) {
     this.$catList.append($.map(cats, function(cat, i) {
-      return $('<li>', { text: cat.name, data: { index: i } })[0];
+      return $('<li>', { class: 'cat-element', text: cat.name, data: { index: i } })[0];
     }));
   },
 
   addListClickListeners(cats) {
     this.$catList.on('click', 'li', function() {
       controller.setCurrentCat(cats[$(this).data('index')]);
-      detailView.render()
+      detailView.render();
+      adminView.populateFormWithCurrentCat();
+    });
+  },
+
+  removeListElements() {
+    $('.cat-element').remove();
+  },
+};
+
+const adminView = {
+  init() {
+    this.$btnAdmin = $('.btn-admin');
+    this.$btnSave = $('.btn-save');
+    this.$admin = $('.admin');
+    this.$nameForm = $('#edit-name');
+    this.$urlForm = $('#edit-url');
+    this.$clicksForm = $('#edit-clicks');
+
+    this.addSaveButtonEvent();
+    this.handleAdminButtonToggle();
+    this.render();
+  },
+
+  render() {
+  },
+
+  populateFormWithCurrentCat() {
+    const cat = controller.getCurrentCat();
+    this.$nameForm.val(cat.name);
+    this.$urlForm.val(cat.url);
+    this.$clicksForm.val(cat.clickCount);
+  },
+
+  handleAdminButtonToggle() {
+    this.$btnAdmin.click(function() {
+      adminView.populateFormWithCurrentCat();
+      adminView.$admin.toggle();
+    });
+  },
+
+  addSaveButtonEvent() {
+    this.$btnSave.click(function() {
+      const params = {
+        name: adminView.$nameForm.val(),
+        url: adminView.$urlForm.val(),
+        clicks: adminView.$clicksForm.val()
+      };
+      controller.save(params);
+      adminView.$admin.hide();
+      listView.removeListElements();
+      listView.render();
+      detailView.render();
     });
   },
 };
